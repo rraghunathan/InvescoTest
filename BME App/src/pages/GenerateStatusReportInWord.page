@@ -1,0 +1,379 @@
+<apex:page standardController="Status_Reports__c" contentType="application/msWord#{!docName}.doc" cache="true" extensions="StatusReportController">
+    <html>
+        <head>
+            <style type="text/css" media="print">
+             body{
+                font-family: Arial Unicode MS;
+                font-size:11px;
+             }
+             td.header1 {
+                font-family: Arial Unicode MS;
+                font-size: 16px;
+                font-weight: bolder;
+                color: black;
+                border-bottom:solid #230470;
+                padding-left:6px;
+                margin-bottom:2px;
+             }
+             td.valField{
+                text-align:left;
+                padding:2px;            
+             }
+             table.tabVal{
+                border-color: black;
+                border-style: solid;
+               
+                border-width: thin;
+                border-spacing: 0px;
+             
+             }
+             table.tabVal td{
+                border-width: thin;
+                padding: 0px;
+                border-style: solid;
+                border-color: black;
+                background-color: white;
+             }
+             table.tabVal th{
+                border-width: thin;
+                padding: 0px;
+                border-style: solid;
+                border-color: black;
+                background-color: white;
+             
+             }
+             table.rPort {
+                border-width: 1px;
+                border-spacing: 0px;
+                border-style: solid;
+                border-color: #C0C0C0;
+                border-collapse: separate;
+                background-color: white;
+            }
+             table.rPort td {
+                border-width: 1px;
+                padding: 0px;
+                border-style: solid;
+                border-color: #BBBABB;
+                background-color: white;
+            }
+            @media print
+            {
+                table {page-break-inside:auto }
+                tr    { page-break-inside:avoid; page-break-after:auto }
+                thead {display:table-header-group }
+            }
+          </style>
+      </head>
+      <body class="body">
+        <table width="100%" border="0">
+            <tr>
+                <td colspan="4" align="center" style="color:black;font-weight:bolder;"><h1><font size="4">Project Status Report</font></h1></td>
+            </tr>
+        </table>
+        <apex:outputPanel rendered="{!statusReport}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Status Report Details</td>
+                </tr>
+            </table>
+            <br/>
+            <table width="100%" border="1" style="border-collapse: collapse" class="rPort">
+                <tr width="100%">
+                    <td width="25%" style="padding:3px;font-weight:bolder;">Name:</td>
+                    <td width="75%" colspan="3" align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:outputField value="{!stReport.Name}"/>
+                    </td>                   
+                </tr>
+                <tr/>
+                <tr width="100%">
+                    <td width="25%" style="padding:3px;font-weight:bolder;">Period Starting On:</td>
+                    <td width="25%" align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:outputField value="{!stReport.Period_Starting_On__c}"/>
+                    </td>
+                    <td width="25%" style="padding:3px;font-weight:bolder;">Period Ending On:</td>
+                    <td width="25%" align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:outputField value="{!stReport.Period_Ending_On__c}"/>
+                    </td>
+                </tr>
+                <tr/>
+                <tr width="100%">                   
+                    <td style="padding:3px;font-weight:bolder;">Overall Status Indicator:</td>
+                    <td align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:image value="https://{!serverURL}/servlet/servlet.ImageServer?id={!statusImgId}&oid={!orgId}"/>
+                    </td>
+                    <td style="padding:3px;font-weight:bolder;">Project Name:</td>
+                    <td align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:outputField value="{!stReport.Project__c}"/>
+                    </td>
+                </tr>
+                <tr/>
+                <tr width="100%">
+                    <td style="padding:3px;font-weight:bolder;">Overall Project Status:</td>
+                    <td align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:image value="https://{!serverURL}/servlet/servlet.ImageServer?id={!projImgId}&oid={!orgId}"/>    
+                    </td>
+                    <td style="padding:3px;font-weight:bolder;">Scope Status:</td>
+                    <td align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:image value="https://{!serverURL}/servlet/servlet.ImageServer?id={!scopeImgId}&oid={!orgId}"/>
+                    </td>
+                </tr>
+                <tr width="100%">   
+                    <td style="padding:3px;font-weight:bolder;">Budget Status:</td>
+                    <td align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:image value="https://{!serverURL}/servlet/servlet.ImageServer?id={!budgetImgId}&oid={!orgId}"/>
+                    </td>
+                    <td style="padding:3px;font-weight:bolder;">Resource Status:</td>
+                    <td align="left" style="background-color:#F3F3F3;color:#000000;text-align:left;padding:3px;">
+                        <apex:image value="https://{!serverURL}/servlet/servlet.ImageServer?id={!resrcImgId}&oid={!orgId}"/>
+                    </td>   
+                </tr>
+            </table>    
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!statusSmry}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Status Report Summary</td>
+                </tr>
+            </table>
+            <apex:outputField value="{!stReport.Status_Summary__c}"/>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!accomplishments}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Key Accomplishments</td>
+                </tr>
+            </table>
+            <apex:outputField value="{!stReport.Key_Accomplishments__c}"/>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!nextSteps}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Next Steps</td>
+                </tr>
+            </table>
+            <apex:outputField value="{!stReport.Next_Steps__c}"/>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!sumOfDel}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Summary of Deliverables</td>
+                </tr>
+            </table>
+            <apex:outputPanel rendered="{!deliverablesList.size>0}">
+                <table width="100%" border="0">
+                    <tr>
+                        <td colspan="4" align="left" style="color:#b04d59"><h4><font size="2" color="#b04d59">Deliverables</font></h4></td>
+                    </tr>
+                </table>
+                <table width="100%" border="1" style="border-collapse: collapse;margin-left:2px;" class="tabVal">
+                    <tr>
+                        <th width="15%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Deliverable Name</th>
+                        <th width="10%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">% Complete</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Status</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Actual Completion Date</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Planned Completion Date</th>
+                        <th width="15%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Release Phase</th>
+                    </tr>
+                    <apex:repeat value="{!deliverablesList}" var="del">
+                        <tr>
+                            <td style="padding:3px;"><apex:outputText value="{!del.Name}"/></td>
+                            <td style="padding:3px;"> <apex:outputText value="{!del.Completed__c}"/></td>
+                            <td style="padding:3px;"> <apex:outputText value="{!del.Status__c}"/></td>
+                            <td style="padding:3px;"> <apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!del.Actual_Completion_Date__c}"/></apex:outputText></td>
+                            <td style="padding:3px;"> <apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!del.Planned_Completion_Date__c}"/></apex:outputText></td>
+                            <td style="padding:3px;"> <apex:outputText value="{!del.Release_Phase__c}"/></td>               
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!deliverablesList.size=0}">
+                <table width="100%" border="0">
+                    <tr>
+                        <td colspan="4" align="left" style="color:#b04d59"><h4><font size="2" color="#b04d59">Deliverables</font></h4></td>
+                    </tr>
+                </table>
+                <apex:outputText value="No deliverables logged for the related release" />                
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!milestoneList.size>0}">
+                <table width="100%" border="0">
+                    <tr>
+                        <td colspan="4" align="left" style="color:#b04d59"><h4><font size="2" color="#b04d59">Milestones</font></h4></td>
+                    </tr>
+                </table>
+                <br/>
+                <table width="100%" border="1" style="border-collapse: collapse;margin-left:2px;" class="tabVal">
+                    <tr>
+                        <th width="25%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Milestone Name</th>                        
+                        <th width="15%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Status</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Actual Completion Date</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Target Completion Date</th>                        
+                    </tr>
+                    <apex:repeat value="{!milestoneList}" var="mst">
+                        <tr>
+                            <td style="padding:3px;"><apex:outputText value="{!mst.Name}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{!mst.Status__c}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!mst.Actual_Completion_Date__c}"/></apex:outputText></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!mst.Target_Completion_Date__c}"/></apex:outputText></td>   
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!milestoneList.size=0}">
+                <table width="100%" border="0">
+                    <tr>
+                        <td colspan="4" align="left" style="color:#b04d59"><h4><font size="2" color="#b04d59">MileStones</font></h4></td>
+                    </tr>
+                </table>
+                <apex:outputText value="No milestones logged for the related release" />                
+            </apex:outputPanel>                   
+        </apex:outputPanel>
+        <br/>
+        <apex:outputPanel rendered="{!delOfMileStones}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Deliverables and Milestones</td>
+                </tr>
+            </table>
+            <br/>
+            <table style="border-width:1px;">
+                <tbody>  
+                    <tr> 
+                        <td width = "30%" style="color:#b04d59;"><apex:outputLabel value="Overall Deliverable % Complete : "/></td>
+                        <td width = "40%"><apex:outputText value="{!delCompStatus}"/></td>         
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <apex:outputPanel rendered="{!mileStones.size>0}">
+                <table width="100%" border="1" style="border-collapse: collapse;margin-left:2px;" class="tabVal">
+                    <tr>
+                        <th width="25%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Milestone Description</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Kick off</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Due Date</th>                      
+                        <th width="10%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Status</th>                                                
+                    </tr>
+                    <apex:repeat value="{!mileStones}" var="mst">
+                        <tr>
+                            <td style="padding:3px;"><apex:outputText value="{!mst.Name}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!mst.startDate}"/></apex:outputText></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!mst.dueDate}"/></apex:outputText></td>
+                            <td style="padding:3px;"><apex:outputText value="{!mst.status}"/></td>        
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!milestones.size=0}">
+                <table width="100%" border="0">
+                    <tr>
+                        <td colspan="4" align="left" style="color:#8928c9"><h3><font size="3" color="red">Milestones</font></h3></td>
+                    </tr>
+                </table>
+                <apex:outputText value="No milestones logged for the related release" />                
+            </apex:outputPanel>                
+        </apex:outputPanel>
+        <br/>
+        <apex:outputPanel rendered="{!showIssues}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Issue Summary</td>
+                </tr>
+            </table>
+            <br/>
+            <apex:outputPanel rendered="{!issuesList.size>0}">
+                <table width="100%" border="1" style="border-collapse: collapse;margin-left:2px;" class="tabVal">
+                    <tr>
+                        <th width="10%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Name</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Description</th>
+                        <th width="15%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Priority/Severity</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Date Submitted</th>                        
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Due Date</th>                                              
+                    </tr>
+                    <apex:repeat value="{!issuesList}" var="issue">
+                        <tr>
+                            <td style="padding:3px;"><apex:outputText value="{!issue.Name}"/></td>
+                            <td style="padding:3px;"> <apex:outputText value="{!issue.Summary__c}"/></td>
+                            <td style="padding:3px;"> <apex:outputText value="{!issue.Priority__c}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!issue.Date_Submitted__c}"/></apex:outputText></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!issue.Due_Date__c}"/></apex:outputText></td>      
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!issuesList.size=0}">
+                <apex:outputText value="No Issues logged for the related release" />                
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <br/>
+        <apex:outputPanel rendered="{!showRisks}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Risk Summary</td>
+                </tr>
+            </table>
+            <br/>
+            <apex:outputPanel rendered="{!risksList.size>0}">
+                <table width="100%" border="1" style="border-collapse: collapse;margin-left:2px;" class="tabVal">
+                    <tr>
+                        <th width="10%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Name</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Description</th>
+                        <th width="15%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Priority/Severity</th>
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Date Submitted</th>                        
+                        <th width="20%" style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Due Date</th>
+                        <th width="15%"  style="background-color:#230470;color:#ffffff;font-weight:bold;padding:3px;">Risk Probability</th>                                             
+                    </tr>
+                    <apex:repeat value="{!risksList}" var="risk">
+                        <tr>
+                            <td style="padding:3px;"><apex:outputText value="{!risk.Name}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{!risk.Summary__c}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{!risk.Priority__c}"/></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!risk.Date_Submitted__c}"/></apex:outputText></td>
+                            <td style="padding:3px;"><apex:outputText value="{0, date, MMMM d, yyyy}"><apex:param value="{!risk.Due_Date__c}"/></apex:outputText></td>
+                            <td style="padding:3px;"><apex:outputText value="{!risk.Risk_Probability__c}"/></td>      
+                        </tr>
+                    </apex:repeat>
+                </table>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!risksList.size=0}">
+                <apex:outputText value="No Risks logged for the related release" />             
+            </apex:outputPanel>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!dispDashboard}">
+            <table width="100%" border="0" style="border-collapse: collapse">
+                <tr>
+                    <td><br/></td>
+                </tr>
+                <tr>
+                    <td class="header1" colspan="4" valign="bottom">Dashboard</td>
+                </tr>
+            </table>
+            <br/>
+            <apex:outputLink value="{!dashboardURL}" target="_blank">Click here to view the Dashboard</apex:outputLink>
+        </apex:outputPanel>
+    </body>     
+  </html>
+</apex:page>

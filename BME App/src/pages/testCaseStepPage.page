@@ -1,0 +1,87 @@
+<apex:page controller="testCaseStepPageController" showHeader="false" sidebar="false">
+<style type = "text/css">
+    body {background-color:#F3F3EC}
+</style> 
+<script language="JavaScript">
+function addJs(){
+alert('Test Case Step result created');
+goBack();
+} 
+function goBack(){
+   window.parent.parent.box.hide();
+}
+
+function autoCheckDefectCrtChkBx(checkBoxId,summaryFldId,severityFldId,currVar){
+
+if(document.getElementById(summaryFldId).value != '' || document.getElementById(severityFldId).value != '--None--' ){
+if(document.getElementById(checkBoxId).checked == false && currVar == false){
+document.getElementById(checkBoxId).checked = true;
+
+}
+}
+if(currVar == true){
+if(document.getElementById(summaryFldId).value == '' && document.getElementById(severityFldId).value == '--None--' ){
+document.getElementById(checkBoxId).checked = false;
+}
+}
+
+
+}
+</script>
+<apex:form >
+<apex:outputPanel id="parentPanelId">
+  <apex:actionFunction name="statusFldChng" action="{!showCreateDefectSection}" reRender="parentPanelId"/>
+<apex:pageBlock >
+    <apex:pageBlockButtons location="bottom" rendered="{!NOT(createDefect)}">
+<apex:commandButton value="Add" onClick="addJs();" action="{!createTestCaseStepResult}"/>
+<apex:commandButton value="Cancel" onClick="goBack();"/>
+</apex:pageBlockButtons>
+
+  <apex:pageBlockTable value="{!testCaseStepResults}" var="testCaseStRslts">
+      <apex:column >
+          <apex:outputLabel for="resultByFldId"><b>Tested By&nbsp;&nbsp;&nbsp;</b></apex:outputLabel><br/>
+          <apex:inputField value="{!testCaseStRslts.Result_By__c}" id="resultByFldId"/>
+      </apex:column>
+  <apex:column >
+    <apex:outputLabel for="dateTestedId"><b>Date Tested&nbsp;&nbsp;&nbsp;</b></apex:outputLabel><br/>
+    <apex:inputField value="{!testCaseStRslts.Tested_On__c}" id="dateTestedId"/>
+  </apex:column>
+  <apex:column >
+    <apex:outputLabel for="resultFldId"><b>Result&nbsp;&nbsp;&nbsp;</b></apex:outputLabel><br/>
+    <apex:inputField value="{!testCaseStRslts.Status__c}" id="resultFldId" onchange="statusFldChng();"/>
+  </apex:column>
+  <apex:column >
+    <apex:outputLabel for="commentsFldId"><b>Comments&nbsp;&nbsp;&nbsp;</b></apex:outputLabel><br/>
+    <apex:inputField value="{!testCaseStRslts.Comments__c}" id="commentsFldId"/>
+  </apex:column>
+  </apex:pageBlockTable>
+  </apex:pageBlock>
+  
+  <apex:pageBlock id="dftQkCrtPbId" rendered="{!createDefect}">
+
+  <div align="center"><b>  ------------------- Defect Quick Create -------------------  </b></div>
+    <apex:pageBlockButtons location="bottom" rendered="{!createDefect}">
+<apex:commandButton value="Add" onClick="addJs();" action="{!createTestCaseStepResult}"/>
+<apex:commandButton value="Cancel" onClick="goBack();"/>
+</apex:pageBlockButtons>
+     <apex:pageBlockSection columns="3">
+   <apex:pageBlockSectionItem id="chkBxPBSIId">
+   <apex:outputLabel value="Create Defect?" for="createDefectChkBxFld"/>
+   <apex:inputCheckbox value="{!createDefect}" id="createDefectChkBxFld" onchange="autoCheckDefectCrtChkBx('{!$Component.chkBxPBSIId.createDefectChkBxFld}','{!$Component.smryPBSIId.defectSummaryFld}','{!$Component.svrtyidPBSIId.defectSeverityFld}',true);"/>
+   </apex:pageBlockSectionItem>
+   
+   <apex:pageBlockSectionItem id="smryPBSIId">
+      <apex:outputLabel value="Summary" for="defectSummaryFld"/>
+    <apex:inputField value="{!defectRec.Summary__c}" id="defectSummaryFld" style="width:400px;height:100px" onchange="autoCheckDefectCrtChkBx('{!$Component.chkBxPBSIId.createDefectChkBxFld}','{!$Component.defectSummaryFld}','{!$Component.svrtyidPBSIId.defectSeverityFld}',false);"/>
+   </apex:pageBlockSectionItem>
+   
+      <apex:pageBlockSectionItem id="svrtyidPBSIId">
+      <apex:outputLabel value="Serverity" for="defectSeverityFld"/>
+    <apex:inputField value="{!defectRec.Severity__c}" id="defectSeverityFld" onchange="autoCheckDefectCrtChkBx('{!$Component.chkBxPBSIId.createDefectChkBxFld}','{!$Component.smryPBSIId.defectSummaryFld}','{!$Component.defectSeverityFld}',false);"/>
+   </apex:pageBlockSectionItem>
+   
+   </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:outputPanel>
+</apex:form>
+</apex:page>

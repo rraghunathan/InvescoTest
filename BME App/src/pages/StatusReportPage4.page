@@ -1,0 +1,199 @@
+<!-- 
+Copyright (c) 2011, salesforce.com, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+    * Neither the name of the salesforce.com, Inc. nor the names of its contributors 
+    may be used to endorse or promote products derived from this software 
+    without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page standardController="Status_Reports__c" extensions="StatusReportController" id="thePage" action="{!populatePItems}">
+    <style>
+       .myLabelClass {
+           color: #4A4A56;
+           font-size: 91%;
+           font-weight: bold;
+           font-family: Arial, Helvetica, sans-serif;
+           border-collapse: separate;
+           border-spacing: 2px;
+       }
+    </style>
+    <apex:form >
+        <apex:pageBlock title="Status Report Details" rendered="{!statusReport}">
+            <table width="100%">
+                <tr width="100%">
+                    <td width="25%">
+                        <apex:outputLabel value="Name" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:outputField value="{!stReport.Name}"/>    
+                    </td>
+                    <td width="25%"/>
+                    <td width="25%"/>                   
+                </tr>
+                <tr/>
+                <tr width="100%">
+                    <td width="25%">
+                        <apex:outputLabel value="Period Starting On" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:outputField value="{!stReport.Period_Starting_On__c}"/>
+                    </td>
+                    <td width="25%">
+                        <apex:outputLabel value="Period Ending On" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:outputField value="{!stReport.Period_Ending_On__c}"/>    
+                    </td>
+                </tr>
+                <tr/>
+                <tr width="100%">                   
+                    <td width="25%">
+                        <apex:outputLabel value="Overall Status Indicator" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:image value="{!statusIndURL}" width="30" height="15"/>
+                    </td>
+                    <td width="25%">
+                    	<apex:outputLabel value="Project Name" styleClass="myLabelClass"/>
+                   	</td>
+                    <td width="25%">
+                    	<apex:outputField value="{!stReport.Project__c}"/>
+                    </td> 
+                </tr>
+                <tr/>
+                <tr width="100%">
+                    <td width="25%">
+                        <apex:outputLabel value="Overall Project Status" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:image value="{!proj}" width="30" height="15"/>    
+                    </td>
+                    <td width="25%">
+                        <apex:outputLabel value="Scope" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:image value="{!scope}" width="30" height="15"/>
+                    </td>
+                </tr>
+                <tr width="100%">   
+                    <td width="25%">        
+                        <apex:outputLabel value="Budget" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:image value="{!budget}" width="30" height="15"/>
+                    </td>
+                    <td width="25%">            
+                        <apex:outputLabel value="Resources" styleClass="myLabelClass"/>
+                    </td>
+                    <td width="25%">
+                        <apex:image value="{!resrc}" width="30" height="15"/>
+                    </td>   
+                </tr>
+            </table>        
+        </apex:pageBlock>
+        <apex:pageBlock title="Status Summary" rendered="{!statusSmry}">
+            <apex:outputField value="{!stReport.Status_Summary__c}"/>
+        </apex:pageBlock>
+        <apex:pageBlock title="Key Accomplishments" rendered="{!accomplishments}">
+            <apex:outputField value="{!stReport.Key_Accomplishments__c}"/>
+        </apex:pageBlock>
+        <apex:pageBlock title="Next Steps" rendered="{!nextSteps}">
+            <apex:outputField value="{!stReport.Next_Steps__c}"/>
+        </apex:pageBlock>
+        <apex:pageBlock title="Summary of Deliverables" rendered="{!sumOfDel}">
+            <apex:pageBlockTable value="{!deliverablesList}" var="del" rendered="{!deliverablesList.size>0}">
+                <apex:column value="{!del.Name}" headerValue="Deliverable Name"/>
+                <apex:column value="{!del.Completed__c}" headerValue="% Complete"/>
+                <apex:column value="{!del.Status__c}" headerValue="Status"/>
+                <apex:column value="{!del.Actual_Completion_Date__c}" headerValue="Actual Completion Date"/>
+                <apex:column value="{!del.Planned_Completion_Date__c}" headerValue="Planned Completion Date"/>
+                <apex:column value="{!del.Release_Phase__c}" headerValue="Release Phase"/>              
+            </apex:pageBlockTable>
+            <apex:pageblockSection title="Deliverables" rendered="{!deliverablesList.size=0}">
+                <apex:outputText value="No deliverables logged for the related release" />                
+            </apex:pageblockSection>
+            <br/>
+            <apex:pageBlockTable value="{!milestoneList}" var="mst" rendered="{!milestoneList.size>0}">
+                <apex:column value="{!mst.Name}" headerValue="Milestone Name"/>
+                <apex:column value="{!mst.Status__c}" headerValue="Status"/>
+                <apex:column value="{!mst.Actual_Completion_Date__c}" headerValue="Actual Completion Date"/>
+                <apex:column value="{!mst.Target_Completion_Date__c}" headerValue="Target Completion Date"/>
+            </apex:pageBlockTable>
+            <apex:pageblockSection title="MileStones" rendered="{!milestoneList.size=0}">
+                <apex:outputText value="No milestones logged for the related release" />                
+            </apex:pageblockSection>                   
+        </apex:pageBlock>
+        <apex:pageBlock title="Deliverables and Milestones" rendered="{!delOfMileStones}">
+            <table class="list" border = "1">
+                <tbody>  
+                    <tr class="dataRow"> 
+                        <td class="dataCell" width = "30%"><apex:outputLabel value="Overall Deliverable % Complete"/> </td>
+                        <td class="dataCell" width = "70%"><apex:outputText value="{!delCompStatus}"/> </td>         
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <apex:pageBlockTable value="{!mileStones}" var="mst" rendered="{!mileStones.size>0}">
+                <apex:column value="{!mst.Name}" headerValue="Milestone Description"/>
+                <apex:column value="{!mst.startDate}" headerValue="Kick off"/>
+                <apex:column value="{!mst.dueDate}" headerValue="Due Date"/>
+                <apex:column value="{!mst.status}" headerValue="Status"/>
+            </apex:pageBlockTable>
+            <apex:pageblockSection title="MileStones" rendered="{!milestones.size=0}">
+                <apex:outputText value="No milestones logged for the related release" />                
+            </apex:pageblockSection>                
+        </apex:pageBlock>
+        <apex:pageBlock title="Issue Summary" rendered="{!showIssues}">
+            <apex:pageBlockTable value="{!issuesList}" var="issue" rendered="{!issuesList.size>0}">
+                <apex:column value="{!issue.Name}" headerValue="Name"/>
+                <apex:column value="{!issue.Summary__c}" headerValue="Description"/>
+                <apex:column value="{!issue.Priority__c}" headerValue="Priority/Severity"/>
+                <apex:column value="{!issue.Date_Submitted__c}" headerValue="Date Submitted"/>
+                <apex:column value="{!issue.Due_Date__c}" headerValue="Due Date"/>
+            </apex:pageBlockTable>
+            <apex:pageblockSection rendered="{!issuesList.size=0}">
+                <apex:outputText value="No Issues logged for the related release" />                
+            </apex:pageblockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Risk Summary" rendered="{!showRisks}">
+            <apex:pageBlockTable value="{!risksList}" var="risk" rendered="{!risksList.size>0}">
+                <apex:column value="{!risk.Name}" headerValue="Name"/>
+                <apex:column value="{!risk.Summary__c}" headerValue="Description"/>
+                <apex:column value="{!risk.Priority__c}" headerValue="Priority/Severity"/>
+                <apex:column value="{!risk.Date_Submitted__c}" headerValue="Date Submitted"/>
+                <apex:column value="{!risk.Due_Date__c}" headerValue="Due Date"/>
+                <apex:column value="{!risk.Risk_Probability__c}" headerValue="Risk Probability"/>
+            </apex:pageBlockTable>
+            <apex:pageblockSection rendered="{!risksList.size=0}">
+                <apex:outputText value="No Risks logged for the related release" />             
+            </apex:pageblockSection>
+        </apex:pageBlock>
+        <apex:pageBlock title="Dashboard" rendered="{!dispDashboard}">
+            <apex:outputLink value="{!dashboardURL}" target="_blank">Click here to view the Dashboard</apex:outputLink>
+        </apex:pageBlock>
+        <div>
+            <apex:commandButton value="Back" action="{!step3}"/>
+            <apex:commandButton value="Generate Word Doc" action="{!generateWord}"/>
+            <apex:commandButton value="Generate PDF" action="{!generatePDF}"/>
+        </div>     
+    </apex:form>
+</apex:page>

@@ -1,0 +1,135 @@
+<!--
+Copyright (c) 2011, salesforce.com, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+    * Neither the name of the salesforce.com, Inc. nor the names of its contributors 
+    may be used to endorse or promote products derived from this software 
+    without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page standardController="Release__c" extensions="ReleaseChartsController" sidebar="false">
+<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <style>
+        .myLabelClass {
+            font-size: 120%;
+            font-family: Calibri, Helvetica, sans-serif;
+            border-collapse: separate;
+            border-spacing: 2px;        
+        }
+    </style>
+    <apex:outputPanel >
+    <table class="detailList" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr/>
+        <tr>
+            <td width="50%">    
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLabel styleClass="myLabelClass">Issue Analysis</apex:outputLabel></div>
+                <div id="chart_div0"></div>
+            </td>
+            <td width="50%">
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLabel styleClass="myLabelClass">Risks by Level of Impact</apex:outputLabel></div>
+                <div id="chart_div1"></div>
+            </td>
+        </tr>
+        <tr>
+            <td width="50%">    
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLabel styleClass="myLabelClass">Status of Deliverables</apex:outputLabel></div>
+                <div id="chart_div2"></div>
+            </td>
+            <td width="50%">    
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<apex:outputLabel styleClass="myLabelClass">Status of Work Packages</apex:outputLabel></div>
+                <div id="chart_div3"></div>
+            </td>
+        </tr>
+    </table>
+    <script>
+    var data;    
+    google.load("visualization", "1", {packages:["corechart"]});
+    
+      function drawChart() {      
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Issue Status');
+        data.addColumn('number', 'No. of Issues');
+        var noOfRows = 0;
+        <apex:repeat value="{!allIssues}">
+            noOfRows++;
+        </apex:repeat>
+        data.addRows(noOfRows++);
+        var cnt = 0;
+        <apex:repeat value="{!allIssues}" var="a">
+            data.setValue(cnt, 0, "{!a}")
+            data.setValue(cnt, 1, <apex:outputText value="{!allIssues[a]}"/>);
+            cnt++;
+        </apex:repeat>
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div0'));
+        chart.draw(data, {width: 400, height: 240, pieSliceText:'value', colors:['eeaa66','2299bb','ee3322','666666','aabbcc','33ddbb','55aabb'],chartArea:{left:40,top:40,width:"80%",height:"60%"}});
+        
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Risk Impact');
+        data.addColumn('number', 'No. of Risks');
+        noOfRows = 0;
+        <apex:repeat value="{!riskImpact}">
+            noOfRows++;
+        </apex:repeat>
+        data.addRows(noOfRows);
+        cnt = 0;
+        <apex:repeat value="{!riskImpact}" var="a">         
+            data.setValue(cnt, 0, "{!a}")
+            data.setValue(cnt, 1, <apex:outputText value="{!riskImpact[a]}"/>);
+            cnt++;
+        </apex:repeat>        
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div1'));
+        chart.draw(data, {width: 400, height: 240, pieSliceText:'value', colors:['eeaa66','2299bb','33ddbb', 'aabbcc'],chartArea:{left:40,top:40,width:"80%",height:"60%"}});
+
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Status of the Deliverables');
+        <apex:repeat value="{!statusCountMap}" var="a">
+            data.addColumn('number',"{!a}");        
+        </apex:repeat>
+        data.addRows(1);
+        data.setValue(0, 0, 'Status');
+        var val = 1;
+        <apex:repeat value="{!statusCountMap}" var="a" rendered="{!statusCountMap.size!=0}">  
+            data.setValue(0, val, <apex:outputText value="{!statusCountMap[a]}"/>);
+            val++;
+        </apex:repeat>
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div2'));
+        chart.draw(data, {width: 400, height: 240, colors:['eeaa66','2299bb','ee3322','666666','aabbcc','33ddbb','55aabb'],chartArea:{left:40,top:40}});
+        
+        data = new google.visualization.DataTable();
+        data.addColumn('string', 'Status of the Work Package');
+        <apex:repeat value="{!workPkgStatus}" var="a">
+            data.addColumn('number',"{!a}");        
+        </apex:repeat>
+        data.addRows(1);
+        data.setValue(0, 0, 'Status');
+        var val = 1;
+        <apex:repeat value="{!workPkgStatus}" var="a">  
+            data.setValue(0, val, <apex:outputText value="{!workPkgStatus[a]}"/>);
+            val++;
+        </apex:repeat>
+        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div3'));
+        chart.draw(data, {width: 400, height: 240, colors:['eeaa66','2299bb','ee3322','666666','aabbcc'],chartArea:{left:40,top:40}});                    
+     }
+     
+     google.setOnLoadCallback(drawChart);
+    </script>                    
+    </apex:outputPanel>
+</apex:page>

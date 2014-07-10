@@ -1,0 +1,180 @@
+<apex:page controller="AddTestCaseStepResultsController" tabStyle="Test_Case__c">
+<apex:styleSheet value="http://yui.yahooapis.com/2.6.0/build/assets/skins/sam/skin.css" />
+ 
+<apex:includeScript value="http://yui.yahooapis.com/2.6.0/build/yahoo-dom-event/yahoo-dom-event.js" />
+<apex:includeScript value="http://yui.yahooapis.com/2.6.0/build/container/container-min.js" />
+<apex:includeScript value="http://yui.yahooapis.com/2.6.0/build/animation/animation-min.js" />
+
+<script>
+ // Create a namespace for our custom functions
+    YAHOO.namespace("force.com");
+
+// Function called when we want to show the dialog
+    YAHOO.force.com.showMe = function() {
+        document.getElementById("myPanel").style.display = "block";
+        YAHOO.force.com.myDialog.show();
+    }
+// Function called when we want to hide the dialog
+    YAHOO.force.com.hideMe = function() {
+        YAHOO.force.com.myDialog.hide();
+    }
+// Function called when the DOM is ready to create the dialog,
+// render the dialog into the document body, add our dialog skin
+// css to the body tag, and wire up the buttons on our dialog    
+    YAHOO.force.com.init = function() {
+        document.body.className = document.body.className + " yui-skin-sam";
+        
+        YAHOO.force.com.myDialog = new YAHOO.widget.Panel(
+            "myPanel",  // The id of our dialog container
+            { 
+                    width           :   800,    // You can play with this until it's right
+                    visible         :   false,  // Should be invisible when rendered
+                    draggable       :   true,   // Make the dialog draggable
+                    close           :   false,  // Don't include a close title button
+                    modal           :   true,   // Make it modal
+                    fixedCenter     :   true,   // Keep centered if window is scrolled
+                    zindex          :   40,     // Make sure it's on top of everything
+                    
+                    // This line adds the appear/vanish fade effect
+                    effect          :   {
+                                          effect:YAHOO.widget.ContainerEffect.FADE,
+                                          duration:0.35
+                                        } 
+            }
+         );
+        
+        // Render the dialog to the document.body level of the DOM
+        YAHOO.force.com.myDialog.render(document.body);
+    }
+
+// Add the init method to the window.load event
+    YAHOO.util.Event.addListener(window, "load", YAHOO.force.com.init);
+</script>
+<apex:sectionHeader title="Test Result" subtitle="Add & Update Test Step Result(s)"/>
+ <apex:form id="stepdes">
+ <apex:pageBlock title="Case Detail" id="pb1">
+ <apex:pageBlockButtons Location="top">
+    <apex:commandButton id="cancel" value="Cancel" action="{!Cancel_Click}"/>
+ </apex:pageBlockButtons>
+ <table  class="detailList" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td class="labelCol">Test Case No</td>
+        <td class="dataCol col02"><apex:outputField id="testcaseno"  value="{!testcase.Test_Case_No__c}"/></td>
+        <td class="labelCol">Test Case Name</td>
+        <td class="dataCol"><apex:outputField id="testcasename"  value="{!testcase.Name}"/></td>
+    </tr>
+    <tr>
+        <td class="labelCol">Summary</td>
+        <td class="dataCol col02"><apex:outputField id="summary"  value="{!testcase.Summary__c}"/></td>
+        <td class="labelCol">Type</td>
+        <td class="dataCol"><apex:outputField id="typetxt"  value="{!testcase.Type__c}"/></td>
+    </tr>
+    <tr>
+        <td class="labelCol">Use Case</td>
+        <td class="dataCol col02"><apex:outputField id="usecase"  value="{!testcase.Use_Case__c}"/></td>
+        <td class="labelCol">Assigned To</td>
+        <td class="dataCol"><apex:outputField id="assignedtotxt" value="{!testcase.Assigned_To__c}"/></td>
+    </tr>
+    <tr>
+        <td class="labelCol">Status</td>
+        <td class="dataCol col02"><apex:outputField id="statustxt"  value="{!testcase.Status__c}"/></td>
+        <td class="labelCol empty">&nbsp;</td>
+        <td class="dataCol empty">&nbsp;</td>
+    </tr>
+    <tr>
+        <td class="labelCol">Created By</td>
+        <td class="dataCol col02"><apex:outputField id="crby"  value="{!testcase.CreatedById}"/></td>
+        <td class="labelCol">Owner</td>
+        <td class="dataCol"><apex:outputField id="ownerid"  value="{!testcase.OwnerId}"/></td>
+    </tr>
+    <tr>
+        <td class="labelCol last">Last Modified By</td>
+        <td class="dataCol col02 last"><apex:outputField id="lmodi"  value="{!testcase.LastModifiedById}"/></td>
+        <td class="labelCol empty last">&nbsp;</td>
+        <td class="dataCol empty last">&nbsp;</td>
+    </tr>
+</table>
+ </apex:pageBlock> 
+ </apex:form>
+ <apex:form id="form">  
+ <apex:pageBlock title="Steps description" id="pb_StepDescription">
+    <table width="100%" class = "list" id="stepResults">
+       <tr >
+           <th width="10%">Step No.</th>
+           <th width="30%">Step Description</th>
+           <th width="20%">Expected Result</th>
+           <th width="10%></th>
+           <th width="30%"></th>
+           
+       </tr>
+      
+       <apex:repeat value="{!TestCaseSteps}" var="testCases" id="repeater">       
+       
+       <tr bgcolor="#D8AD3B">
+             <td><span class="event">{!testCases.Step_Number__c}</span></td>
+             <td><span class="event">{!testCases.Step_Description__c}</span></td>
+             <td colspan="3"><span class="event">{!testCases.Expected_Result__c}</span></td>
+                              
+         </tr>      
+         <tr>
+           <th><apex:commandButton value="Add Result" oncomplete="YAHOO.force.com.showMe();" reRender="form,pop">
+                 <apex:param name="caseid" value="{!testCases.Id}" assignTo="{!SelecteStepId}"/>
+                 <apex:param name="adding" value="true" assignTo="{!addrecord}"/>
+                </apex:commandButton></th>
+           <th><u>Date Tested</u></th>
+           <th><u>Tested By</u></th>
+           <th><u>Result</u></th>
+           <th><u>Comments</u></th>
+         </tr>              
+         <apex:repeat value="{!testCases.Test_Case_Results__r}" var="testresults">
+             <tr>
+                <td style="font-weight:bold"><a> <apex:commandLink value="Edit" action="{!editRecord}" oncomplete="YAHOO.force.com.showMe();" reRender="form,pop">
+                    <apex:param name="result" value="{!testresults.Id}" assignTo="{!SelecteResultRecord}"/>
+                    </apex:commandLink></a>&nbsp;|&nbsp;<a><apex:commandLink value="Del" action="{!DeleteResult}" reRender="form">
+                   <apex:param name="result1" value="{!testresults.Id}" assignTo="{!SelecteResultRecord}"/></apex:commandLink></a></td>
+                <td><p><span class="event">{!testresults.Tested_On__c}</span></p></td>
+                <td><p><span class="event">{!testresults.Result_By__r.Name}</span></p></td>
+                <td><p><span class="event">{!testresults.Status__c}</span></p></td>
+                <td><p><span class="event">{!testresults.Comments__c}</span></p></td>
+               <!--   <td><p><apex:outputField value="{!testresults.Comments__c}"/></p></td>  -->
+               <apex:actionFunction action="{!DeleteResult}" name="DeleteResult" reRender="form" >   
+                   <apex:param name="resultid" value="" assignTo="{!SelecteResultId}"/>
+               </apex:actionFunction>
+           </tr> 
+           </apex:repeat>         
+       </apex:repeat> 
+       </table>       
+    </apex:pageBlock>
+</apex:form>
+<div id="myPanel" style="display: none">
+    <div class="bd">
+        <apex:form id="pop">
+            <div class="hd">
+                <apex:outputText value="Add Test Step Results" rendered="{!addrecord}"/>
+                <apex:outputText value="Edit Test Step Results" rendered="{!NOT(addrecord)}"/>
+            </div> 
+            <apex:pageBlock >
+             <div><table bgcolor="#ffffff">
+                   <th width="10%"><u>Tested By</u></th>
+                   <th width="10%"><u>Date Tested</u></th>
+                   <th width="10%"><u>Result</u></th>
+                   <th width="70%"><u>Comments</u></th>
+                  <tr>
+                  <td width="10%"><apex:inputField value="{!testResult.Result_By__c}"/></td>
+                  <td width="10%"><apex:inputField value="{!testResult.Tested_On__c}"/></td>
+                  <td width="10%"><apex:inputField value="{!testResult.Status__c}"/></td>
+                  <td><apex:inputTextArea value="{!testResult.Comments__c}" style="width:70%;height:130%"/></td>  
+                  </tr>
+                  
+                  </table>
+                </div>
+            </apex:pageBlock>
+            <div style="text-align: right;" >              
+              <apex:commandButton value="Add" action="{!addNewResult}" oncomplete="YAHOO.force.com.myDialog.hide();" reRender="form" rendered="{!addrecord}"/>
+              <apex:commandButton value="Save" action="{!editResult}" oncomplete="YAHOO.force.com.myDialog.hide();" reRender="form" rendered="{!NOT(addrecord)}"/>
+              <apex:commandButton value="Cancel" oncomplete="YAHOO.force.com.myDialog.hide();"/>
+            </div>
+        </apex:form>
+    </div>
+    </div>
+</apex:page>

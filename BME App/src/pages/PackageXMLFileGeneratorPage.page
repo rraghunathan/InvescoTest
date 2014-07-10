@@ -1,0 +1,15 @@
+<!-- Page Name  : PackageXMLgeneratorPage
+* Description  : To create package.XMl file for Migration
+* Created By   : Vikram
+* Created Date : 7/8/2014
+* Modification Log:  
+* --------------------------------------------------------------------------------------------------------------------------------------
+* Developer                Date                 Modification ID        Description 
+* ---------------------------------------------------------------------------------------------------------------------------------------
+* Vikram                   7/8/2014           1000                   Initial Version
+-->
+<apex:page controller="PackageXMLFileGenerator" contentType="application/vnd.xml#package.xml" showHeader="false" sidebar="false" cache="false">
+
+     <apex:outputText value="{!XmlStringFormed}" />
+
+</apex:page>

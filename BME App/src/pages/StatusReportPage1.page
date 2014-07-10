@@ -1,0 +1,166 @@
+<!-- 
+Copyright (c) 2011, salesforce.com, Inc.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice, 
+    this list of conditions and the following disclaimer in the documentation 
+    and/or other materials provided with the distribution.
+    * Neither the name of the salesforce.com, Inc. nor the names of its contributors 
+    may be used to endorse or promote products derived from this software 
+    without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
+OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<apex:page standardController="Status_Reports__c" extensions="StatusReportController" id="thePage">
+    <style>
+       .myLabelClass {
+           color: #4A4A56;
+           font-size: 91%;
+           font-weight: bold;
+           font-family: Arial, Helvetica, sans-serif;
+           border-collapse: separate;
+           border-spacing: 2px;
+       }
+       .myFormClass{ 
+           background-color:blue; 
+       }
+    </style>
+    <body>
+    <apex:form id="theForm">
+        <apex:pageBlock title="Status Report Wizard" id="thePageBlock">
+            <I> <apex:outputLabel style="color:#993366" value="This wizard will help you to customize the status report summary. The first step is to select the components. Please select the components and click next."/></I>                
+              <br/><hr/><br/>              
+              <apex:outputPanel >
+                <table width = "100%">
+                    <tr width = "100%">
+                        <td width = "10%"/>
+                        <td width = "20%">
+                            <apex:inputCheckbox value="{!statusReport}"/>
+                            <apex:outputLabel value="Status Report Details" styleClass="myLabelClass"/>
+                        </td>
+                        <td width = "10%"/>                       
+                        <td width = "20%">
+                            <apex:inputCheckbox value="{!accomplishments}" />
+                            <apex:outputLabel value="Key Accomplishments" styleClass="myLabelClass"/>
+                        </td>
+                        <td width = "10%"/>
+                        <td width = "20%">
+                            <apex:inputCheckbox value="{!sumOfDel}">
+                                <apex:actionSupport event="onclick" action="{!actionFunction}" reRender="{!$Component.theDBlock}" status="counterStatus"/>
+                            </apex:inputCheckbox>                            
+                            <apex:outputLabel value="Summary of Deliverables" styleClass="myLabelClass"/>
+                        </td>
+                        <td width = "10%">
+                            <apex:actionStatus id="counterStatus" startText="Searching...">
+                                <apex:facet name="start">
+                                    <center>
+                                        <img src="/apexpages/devmode/img/saveStatus.gif" border="0" />
+                                    </center>
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </td>
+                    </tr>
+                 </table>
+                 <br/><hr/><br/>
+                 <table width = "100%">
+                    <tr width = "100%">
+                        <td width = "10%"/>
+                        <td width = "20%">
+                            <apex:inputCheckbox value="{!statusSmry}"/>
+                            <apex:outputLabel value="Status Summary" styleClass="myLabelClass"/>
+                        </td>
+                        <td width = "10%"/>
+                        <td width = "20%">
+                            <apex:inputCheckbox value="{!nextSteps}" />
+                            <apex:outputLabel value="Next Steps" styleClass="myLabelClass"/>
+                        </td>
+                        <td width = "10%"/>
+                        <td width = "20%">
+                            <apex:inputCheckbox value="{!delOfMileStones}" />
+                            <apex:outputLabel value="Deliverables and Milestones" styleClass="myLabelClass"/>
+                        </td>
+                        <td width = "10%"/>
+                    </tr>
+                 </table>
+                 <br/><hr/>
+            </apex:outputPanel>
+        </apex:pageBlock>        
+        <apex:outputPanel id="theDBlock">
+        <apex:pageBlock title="Deliverables and MileStones" rendered="{!sumOfDel}" >
+            <apex:tabPanel switchType="client">
+                <apex:tab label="Deliverables">
+                    <table>
+                        <tr/>
+                        <tr>
+                            <td><apex:outputLabel value="Status" styleClass="myLabelClass"/></td>
+                            <td>
+                                <apex:selectList id="Status1" size="8" multiselect="true" value="{!reqDeliverableStatus}">
+                                    <apex:selectOptions value="{!delStatusValues}"/>
+                                </apex:selectList>
+                            </td>                           
+                            <td/>
+                        </tr>
+                        <tr/>
+                        <tr>
+                            <td><apex:outputLabel value="Planned Completion Date(Range)" styleClass="myLabelClass"/></td>
+                            <td><apex:inputField value="{!DeliverableStart.Planned_Completion_Date__c}" required="false"/></td>
+                            <td><apex:inputField value="{!DeliverableEnd.Planned_Completion_Date__c}" required="false"/></td>
+                        </tr>
+                        <tr/>
+                        <tr>
+                            <td><apex:outputLabel value="Actual Completion Date(Range)" styleClass="myLabelClass"/></td>
+                            <td><apex:inputField value="{!DeliverableStart.Actual_Completion_Date__c}" required="false"/></td>
+                            <td><apex:inputField value="{!DeliverableEnd.Actual_Completion_Date__c}" required="false"/></td>
+                        </tr>
+                    </table>
+                </apex:tab>
+                <apex:tab label="Milestones">
+                    <table>
+                        <tr/>
+                        <tr>
+                            <td><apex:outputLabel value="Status" styleClass="myLabelClass"/></td>
+                            <td>
+                                <apex:selectList id="Status2" size="5" multiselect="true" value="{!reqMilestoneStatus}">
+                                    <apex:selectOptions value="{!mileStatusValues}"/>
+                                </apex:selectList>
+                            </td>
+                            <td/>
+                        </tr>
+                        <tr/>
+                        <tr>
+                            <td><apex:outputLabel value="Target Completion Date(Range)" styleClass="myLabelClass"/></td>
+                            <td><apex:inputField value="{!MilestoneStart.Target_Completion_Date__c}" required="false"/></td>
+                            <td><apex:inputField value="{!MilestoneEnd.Target_Completion_Date__c}" required="false"/></td>
+                        </tr>
+                        <tr/>
+                        <tr>
+                            <td><apex:outputLabel value="Actual Completion Date(Range)" styleClass="myLabelClass"/></td>
+                            <td><apex:inputField value="{!MilestoneStart.Actual_Completion_Date__c}" required="false"/></td>
+                            <td><apex:inputField value="{!MilestoneEnd.Actual_Completion_Date__c}" required="false"/></td>
+                        </tr>
+                    </table>
+                </apex:tab>
+            </apex:tabPanel>
+        </apex:pageBlock>
+        </apex:outputPanel>
+        <div align="center">
+            <apex:commandButton value="Next" action="{!step2}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}"/> 
+        </div>          
+    </apex:form>
+    </body>
+</apex:page>

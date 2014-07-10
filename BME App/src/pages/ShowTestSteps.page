@@ -1,0 +1,9 @@
+<apex:page standardController="Test_Case__c" extensions="ShowTestStepsExtension">
+<apex:pageBlock >
+<apex:pageBlockTable value="{!TestSteps}" var="a">
+    <apex:column headerValue="Step Number" value="{!a.Step_Number__c}"/>
+     <apex:column headerValue="Step Description" value="{!a.Step_Description__c}"/>
+      <apex:column headerValue="Expected Result" value="{!a.Expected_Result__c}"/>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:page>

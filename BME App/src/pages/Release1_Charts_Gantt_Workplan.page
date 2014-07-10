@@ -1,0 +1,10 @@
+<apex:page standardController="Release__c" extensions="Release1_Charts_Gantt_Helper" sidebar="false">
+
+    <apex:form >
+        <apex:commandLink target="_self" action="{!cancel}" 
+                    rendered="{!!allowView}" >{!$Label.Back}</apex:commandLink>
+        <c:Release_Gantt_Chart target="{!myId}"/>
+        <apex:outputLink target="_top" value="{!$Page.Release1_Charts_Gantt_Workplan}?Id={!myId}&p" 
+                    rendered="{!allowView}">{!$Label.FullView}</apex:outputLink>  
+    </apex:form>
+</apex:page>

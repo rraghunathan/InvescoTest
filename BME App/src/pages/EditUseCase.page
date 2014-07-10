@@ -1,0 +1,97 @@
+<apex:page standardController="Use_Case__c" extensions="EditUseCaseExtension"> 
+<script>
+function Cancel_Click(stepno,stepdescription,expresult)
+{
+
+document.getElementById(stepno).value= '';
+document.getElementById(stepdescription ).value= '';
+document.getElementById(expresult).value= '';
+}
+</script>
+<!--Section Header-->
+<apex:sectionHeader title="Use Case / Use Case Step" subtitle="Edit Use Case / Add Use Case Step(s)"/>
+<apex:form >
+<apex:pageMessages />
+<!--PageBlock : Create UseCase Record -->
+ <apex:pageBlock title="Edit Case" id="pbAddCase">
+ <apex:pageBlockButtons Location="top">
+     <apex:commandButton id="btnSaveUseCase" value="Save" action="{!Save}"/> 
+     <apex:commandButton id="btnCancel" value="Cancel" action="{!cancel}"/>
+ </apex:pageBlockButtons>
+ <table border="0" width="100%">
+     <!-- <tr >
+         <td style="text-align:right"><span class="labelCol">Use Case No</span></td>
+         <td colspan="4"><apex:inputfield id="usecaseno" required="true" value="{!Use_Case__c.Use_Case_No__c}"/></td>
+    </tr>-->
+     <tr >
+         <td style="text-align:right"><span class="labelCol">Use Case Name</span></td>
+         <td colspan="4"><apex:inputfield id="Usecasename" required="true" value="{!Use_Case__c.Name}"/></td>
+    </tr>
+
+ </table>
+ </apex:pageBlock>
+</apex:form>
+
+
+
+
+<apex:form id="formAddStep">
+
+<!--PageBlock : Add Step against Test Case -->
+<apex:pageBlock title="Add Step" id="pbAddStep">
+ <apex:pageBlockButtons location="top">
+ <apex:commandButton id="btnAddStep" value="Add Step" reRender="formAddStep,formStepDescription"  action="{!AddUseCaseStep}" status="addStepStatus"/>
+ <apex:commandButton id="btnCancelStep" immediate="true" reRender="pbAddStep"  status="CancelStepStatus" value="Cancel" onclick="Cancel_Click('{!$Component.stepnumber}','{!$Component.stepdescription}','{!$Component.expectedresult}')"/>
+ <apex:actionstatus id="addStepStatus" starttext="Adding..."/>
+ <apex:actionstatus id="CancelStepStatus" starttext="Canceling..."/>
+ </apex:pageBlockButtons>
+ <table border="0" width="100%">
+     <tr>
+         <td style="text-align:right"><span class="labelCol">Step Number </span></td>
+         <td><apex:inputfield id="stepnumber" value="{!obj.Step_Number__c}" style="width:50px;" required="true"/></td>
+         <td style="text-align:right"><span class="labelCol">Step Description</span></td>
+         <td><apex:inputfield id="stepdescription" value="{!obj.Step_Description__c}" style="width:300px;height:50px" required="true"/></td>
+         <td style="text-align:right"><span class="labelCol">Expected Result</span></td>
+         <td><apex:inputfield id="expectedresult" value="{!obj.Expected_Result__c}" style="width:300px;height:50px" required="true"/></td>
+     </tr>
+ </table>
+ </apex:pageBlock>
+</apex:form>
+
+
+<apex:form id="formStepDescription">
+<apex:pageMessages />  
+<!--PageBlock : Show Added Steps against Use Case / Edit Test Steps -->
+<apex:pageBlock Title="Step(s) Description" id="pbStepDescription">
+<apex:pageBlockButtons location="top">
+    <apex:commandButton id="btnRemoveStep" value="Remove Step" action="{!removeUseCaseStep}" reRender="formStepDescription,formAddStep"   status="removestepstatus" disabled="{!(noStepCount)}" />
+    <apex:commandButton id="btnUpdateStep" value="Update Step" action="{!updateUseCaseStep}" reRender="formStepDescription,formAddStep" status="updatestepstatus" disabled="{!(noStepCount)}"/>
+    <apex:actionstatus id="removestepstatus" starttext="Removing..."/>
+    <apex:actionstatus id="updatestepstatus" starttext="Updating..."/>
+</apex:pageBlockButtons>
+<I> <apex:outputLabel style="color:#993366" value="To update step please update the step description, expected result. Click the checkbox and click update step button"/></I><br/>
+<I> <apex:outputLabel style="color:#993366" value="To remove step click the checkbox corresponding to the step and click the remove button"/></I>
+
+<apex:pageBlockTable value="{!UseCaseSteps}" var="a" rendered="{!NOT(noStepCount)}">
+    <apex:column >
+    <apex:inputCheckbox value="{!a.selected}" id="checkedone">
+    <apex:actionSupport event="onclick" action="{!GetSelected}" rerender="Selected_PBS"/>
+    </apex:inputCheckbox>
+    </apex:column>
+    
+    <apex:column headerValue="Step Number" >
+    <apex:inputField value="{!a.useCsWr.Step_Number__c}" style="width:50px;" required="true"/>
+    </apex:column>
+    
+    <apex:column headerValue="Step Description" >
+    <apex:inputField value="{!a.useCsWr.Step_Description__c}" style="width:300px;height:50px" required="true"/>
+    </apex:column>
+    
+    <apex:column headerValue="Expected Result">
+    <apex:inputField value="{!a.useCsWr.Expected_Result__c}" style="width:300px;height:50px" required="true" />
+    </apex:column>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:form>
+
+</apex:page>

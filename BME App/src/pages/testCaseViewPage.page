@@ -1,0 +1,52 @@
+<apex:page standardController="Test_Case__c" extensions="testCaseViewPageController">
+
+<script language="JavaScript">
+function createNewStepResult(testCaseStepId){
+var source = '<iframe src = /apex/testCaseStepPage?stepId='+testCaseStepId;
+            var box = new parent.SimpleDialog("helder"+Math.random(), true);
+            parent.box = box;
+            box.setTitle("Add Test Case Step result");
+            box.createDialog();
+            box.setWidth(850);
+            box.setContentInnerHTML(source +" height=\"600\" width=\"50\" frameborder=\"0\" style=\"border:none;  align:center; width:800px; margin-left:0; margin-right: auto; height:300px;overflow-x:hidden;\"><p>Your browser does not support iframes.</p></iframe>");
+            box.setupDefaultButtons();
+            box.show();
+}
+</script>
+
+
+
+<apex:detail relatedList="false"/>
+<apex:form >
+<apex:pageBlock rendered="{!showTestSteps}">
+<apex:pageBlockTable value="{!ShowTestStepsList}" var="testSteps" rowClasses="even,odd">
+<apex:column value="{!testSteps.Step_Number__c}"/>
+<apex:column value="{!testSteps.Step_Description__c}"/>
+<apex:column value="{!testSteps.Expected_Result__c}"/>
+<apex:column > 
+ <apex:commandButton value="Add Result" onClick="createNewStepResult('{!testSteps.Id}')" reRender="outputPanelId"/>
+</apex:column>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:form>
+
+<apex:outputPanel rendered="{!showNoTestStepsRecs}" id="outputPanelId">
+<apex:outputText >Test Steps not defined for this Test Case</apex:outputText>
+</apex:outputPanel>
+<apex:relatedList subject="{!Test_Case__c}" list="Test_Case_User_Join__r"/>
+<apex:relatedList subject="{!Test_Case__c}" list="NotesAndAttachments"/>
+<div id="relatedHistory">                                
+    <apex:pageBlock title="{!$ObjectType.Test_Case__History.labelplural}">
+        <apex:pageblockTable value="{!Test_Case__c.Histories}"  var="u_caseHistory" >
+            <apex:column headerValue="{!$ObjectType.Test_Case__History.fields.Field.label}">
+                <apex:outputText rendered="{!NOT(u_caseHistory.Field = 'created')}" value="{!u_caseHistory.Field}"/>
+                <apex:outputText rendered="{!u_caseHistory.Field = 'created'}" value="Case Created"/>
+            </apex:column>              
+            <apex:column headerValue="{!$ObjectType.Test_Case__History.fields.OldValue.label}" value="{!u_caseHistory.OldValue}"/>
+            <apex:column headerValue="{!$ObjectType.Test_Case__History.fields.NewValue.label}" value="{!u_caseHistory.NewValue}"/>
+            <apex:column headerValue="{!$ObjectType.Test_Case__History.fields.CreatedDate.label}" value="{!u_caseHistory.CreatedDate}"/>
+            <apex:column headerValue="{!$ObjectType.Test_Case__History.fields.CreatedById.label}" value="{!u_caseHistory.CreatedById}"/>
+        </apex:pageblockTable>
+    </apex:pageBlock> 
+</div>
+</apex:page>

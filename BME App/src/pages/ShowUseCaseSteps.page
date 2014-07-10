@@ -1,0 +1,9 @@
+<apex:page standardController="Use_Case__c" extensions="ShowUseCaseStepsExtension">
+<apex:pageBlock >
+<apex:pageBlockTable value="{!useCaseSteps}" var="useCase">
+    <apex:column headerValue="Step Number" value="{!useCase.Step_Number__c}"/>
+     <apex:column headerValue="Step Description" value="{!useCase.Step_Description__c}"/>
+      <apex:column headerValue="Expected Result" value="{!useCase.Expected_Result__c}"/>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:page>

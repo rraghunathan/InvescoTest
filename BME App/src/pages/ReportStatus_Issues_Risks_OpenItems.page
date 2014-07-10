@@ -1,0 +1,34 @@
+<apex:page standardController="Status_Reports__c" extensions="reportStatusWizardExtension">
+    <style type="text/css"> 
+    .headerClass{font-family:Arial;font-size:18px;color:Black;text-align:left}
+    .keyComponents{font-family:Arial;font-size:16px;color:Black;text-align:left;font-style:bold}
+    </style>
+    <Apex:form >
+        <br/>
+        <br/>
+        <center>
+        <apex:panelGrid width="90%" cellpadding="0" cellspacing="0" bgcolor="white"  border="1" headerClass="headerClass">
+            <apex:facet name="header"><center>Status Report Wizard</center></apex:facet>
+            <apex:panelgroup >
+            <apex:pageblock >
+                <apex:pageBlockSection collapsible="false" columns="1">
+                    <Apex:outputText styleClass="keyComponents" value="Select Issue,Risk and Open items :"/> 
+                    <Apex:outputText />
+                    <Apex:outputPanel >
+                    <apex:tabPanel > 
+                        <apex:tab label="Issues"/>
+                        <apex:tab label="Risks"/>
+                        <apex:tab label="Open Items"/>
+                    </apex:tabPanel> 
+                    </Apex:outputPanel>             
+                </apex:pageBlockSection>
+                <apex:pageblockButtons location="bottom">
+                    <apex:commandButton action="{!cancel}" value="Cancel"/>
+                    <apex:commandButton action="{!Next}" value="Next" />                    
+                </apex:pageblockButtons>
+            </apex:pageblock>
+            </apex:panelgroup>
+        </apex:panelGrid> 
+        </center>   
+    </Apex:form>  
+</apex:page>
